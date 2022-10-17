@@ -2,11 +2,10 @@
 -export([start/1]).
 
 start(N) ->
-    erlang:display("Start server"),
     spawn(fun() -> init(N) end).
 
 init(N) ->
-    erlang:display("Init server"),
+    erlang:display("Running server"),
     Store = store:new(N),
     Validator = validator:start(),
     server(Validator, Store).
