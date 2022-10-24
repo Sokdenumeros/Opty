@@ -27,7 +27,11 @@ handler(Client, Validator, Store, Reads, Writes) ->
             Added = lists:keystore(N, 1, Writes, {N, Entry, Value}),
             handler(Client, Validator, Store, Reads, Added);
         {commit, Ref} ->
-	    Validator ! {validate, Ref, Reads, Writes, Client};
+          lists:foreach(fun({Entry, _}) ->
+            Entry ! {removehandler, self()}
+                        end,
+            Reads),
+	    Validator ! {validate, Ref, Reads, Writes, Client, self()};
         abort ->
             ok
     end.
